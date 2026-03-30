@@ -1,9 +1,13 @@
 #!/bin/bash
-# Solvea Social Monitor — 一键安装脚本
-# 安装即可用：钉钉认证已内置，只需填 GitHub Token + Agent 身份
+# Solvea Social Monitor — 安装脚本（由 bootstrap.sh 调用，也可直接运行）
 set -e
 
-DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# 支持 bootstrap 调用（$0 有路径）和直接调用两种方式
+if [ -f "$0" ] && [ "$0" != "bash" ] && [ "$0" != "-" ]; then
+  DIR="$(cd "$(dirname "$0")/.." && pwd)"
+else
+  DIR="$HOME/.claude/skills/solvea-social-monitor"
+fi
 CONFIG="$DIR/agent_config.json"
 
 # ── 内置认证信息（全团队共享，安装即可用）────────────────────────────
@@ -26,22 +30,21 @@ if [ -f "$CONFIG" ]; then
   echo "   Agent: $AGENT_NAME"
   echo ""
 else
-  echo "【第一步：配置 Agent 身份】"
+  echo "【配置 Agent 身份】（只需填一次）"
   echo ""
   read -p "Agent 名称（英文，如 reddit-hunter / x-poster）: " AGENT_NAME
-  read -p "负责平台（如 reddit / x / linkedin，空格分隔）: " PLATFORMS
+  read -p "负责平台（空格分隔，如 reddit / x / linkedin）: " PLATFORMS
   read -p "机器位置（如 mac-mini-hangzhou / windows-la）: " LOCATION
-  read -p "负责人（如 Boyuan / Ivy）: " OWNER
+  read -p "负责人姓名（如 Boyuan / Ivy）: " OWNER
 
   echo ""
-  echo "【第二步：配置平台账号】"
-  echo "（留空跳过，后续可手动编辑 agent_config.json）"
+  echo "【平台账号】（留空跳过，后续可编辑 agent_config.json）"
   read -p "X (Twitter) 账号: " X_ACCOUNT
   read -p "Reddit 账号: " REDDIT_ACCOUNT
   read -p "LinkedIn 账号: " LINKEDIN_ACCOUNT
 
   # 写入配置（所有认证已内置，无需手动配置）
-  cat > "$CONFIG" <<EOF
+  cat > "$CONFIG" <<CFGEOF
 {
   "agent_name": "$AGENT_NAME",
   "platforms": "$PLATFORMS",
@@ -59,7 +62,7 @@ else
   "dingtalk_app_secret": "$DINGTALK_APP_SECRET",
   "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
-EOF
+CFGEOF
   echo "✅ 配置已写入 agent_config.json"
 fi
 
@@ -69,32 +72,47 @@ python3 "$DIR/scripts/register.py" "$CONFIG"
 
 echo ""
 echo "【启动 Worker 守护进程】"
-pkill -f "solvea-social-monitor/scripts/worker.py" 2>/dev/null || true
+# 停止旧进程
+if [ -f "$DIR/worker.pid" ]; then
+  OLD_PID=$(cat "$DIR/worker.pid")
+  kill "$OLD_PID" 2>/dev/null || true
+fi
 nohup python3 "$DIR/scripts/worker.py" "$CONFIG" >> "$DIR/worker.log" 2>&1 &
 echo $! > "$DIR/worker.pid"
-echo "✅ Worker 已启动 (PID $(cat $DIR/worker.pid))"
+echo "✅ Worker 已启动 (PID $(cat $DIR/worker.pid))，每 15 秒轮询任务"
 
 echo ""
-echo "【设置早晚汇报定时任务（每天 BJT 9:00 / 18:00）】"
+echo "【设置早晚汇报定时任务（每天 BJT 09:00 / 18:00）】"
+MORNING_CRON="0 1 * * * python3 $DIR/scripts/reporter.py $CONFIG morning >> $DIR/reporter.log 2>&1"
+EVENING_CRON="0 10 * * * python3 $DIR/scripts/reporter.py $CONFIG evening >> $DIR/reporter.log 2>&1"
 
-REPORTER="python3 $DIR/scripts/reporter.py $CONFIG"
-MORNING_CRON="0 1 * * * $REPORTER morning >> $DIR/reporter.log 2>&1"
-EVENING_CRON="0 10 * * * $REPORTER evening >> $DIR/reporter.log 2>&1"
-
-# 添加到 crontab（去重：先移除旧的，再添加）
-(crontab -l 2>/dev/null | grep -v "solvea-social-monitor/scripts/reporter.py"; \
- echo "$MORNING_CRON"; echo "$EVENING_CRON") | crontab -
-
-echo "✅ 定时任务已设置:"
-echo "   早报: UTC 01:00 (BJT 09:00) 每天"
-echo "   晚报: UTC 10:00 (BJT 18:00) 每天"
+if command -v crontab &>/dev/null; then
+  (crontab -l 2>/dev/null | grep -v "solvea-social-monitor/scripts/reporter.py" || true; \
+   echo "$MORNING_CRON"; echo "$EVENING_CRON") | crontab -
+  echo "✅ 定时任务已设置: BJT 09:00 早报 / BJT 18:00 晚报"
+else
+  # Windows / 无 crontab 环境：输出手动设置说明
+  echo "⚠️  未检测到 crontab（Windows 环境），请手动设置 Windows 任务计划："
+  echo ""
+  echo "   方法一（PowerShell，管理员运行）："
+  echo "   \$trigger_m = New-ScheduledTaskTrigger -Daily -At '09:00'"
+  echo "   \$trigger_e = New-ScheduledTaskTrigger -Daily -At '18:00'"
+  echo "   \$action_m  = New-ScheduledTaskAction -Execute 'python3' -Argument '\"$DIR/scripts/reporter.py\" \"$CONFIG\" morning'"
+  echo "   \$action_e  = New-ScheduledTaskAction -Execute 'python3' -Argument '\"$DIR/scripts/reporter.py\" \"$CONFIG\" evening'"
+  echo "   Register-ScheduledTask -TaskName 'SolveaGTM-Morning' -Trigger \$trigger_m -Action \$action_m -RunLevel Highest -Force"
+  echo "   Register-ScheduledTask -TaskName 'SolveaGTM-Evening' -Trigger \$trigger_e -Action \$action_e -RunLevel Highest -Force"
+  echo ""
+  echo "   方法二：将以下两条命令加入 Windows 任务计划程序（09:00 和 18:00 各一条）："
+  echo "   python3 $DIR/scripts/reporter.py $CONFIG morning"
+  echo "   python3 $DIR/scripts/reporter.py $CONFIG evening"
+fi
 
 echo ""
 echo "========================================"
-echo "  ✅ $AGENT_NAME 安装完成，已接入 GTM 网络"
+echo "  ✅ [$AGENT_NAME] 安装完成，已接入 GTM 网络"
 echo ""
 echo "  钉钉群指令："
 echo "  @Hunter AI $AGENT_NAME taste: 反馈内容"
 echo "  @Hunter AI $AGENT_NAME prompt: 优化策略"
-echo "  @Hunter AI report now  （立即触发汇报）"
+echo "  @Hunter AI report now         立即触发汇报"
 echo "========================================"

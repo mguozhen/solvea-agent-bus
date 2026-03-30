@@ -13,47 +13,48 @@ metadata:
 
 ## 安装（每台机器执行一次）
 
+**Mac / Linux：**
 ```bash
-curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/bootstrap.sh | bash
 ```
 
-安装时会提示配置：
-- **Agent 名称**（如 `reddit-hunter` / `x-poster`）
-- **负责平台**（如 `reddit,x` / `linkedin`）
-- **机器位置**（如 `mac-mini-hangzhou`）
-- **负责人**（如 `Boyuan`）
-- **平台账号**（X/Reddit/LinkedIn）
-- **GitHub Token**（用于 Agent Bus 通信）
+**Windows（Git Bash）：**
+```bash
+curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/bootstrap.sh | bash
+```
 
-安装完成后 3 分钟内出现在钉钉晨报。
+安装时只需填写：
+- **Agent 名称**（如 `reddit-hunter` / `x-poster`）
+- **负责平台**（如 `reddit x` / `linkedin`）
+- **机器位置**（如 `mac-mini-hangzhou` / `windows-la`）
+- **负责人**（如 `Boyuan` / `Ivy`）
+- **平台账号**（X/Reddit/LinkedIn，可留空）
+
+所有认证（GitHub Token、钉钉 Webhook/AppKey/AppSecret）已内置，**安装完成后 3 分钟内出现在钉钉晨报。**
 
 ## 钉钉指令
 
 ```
-# 给指定 Agent 发 Taste 反馈
+# 给指定 Agent 发 Taste 反馈（自动更新 Playbook）
 @Hunter AI reddit-hunter taste: 文案太硬了，要更像真人
 
 # 给指定 Agent 推 Prompt 优化
 @Hunter AI x-poster prompt: 多用具体数字，少用形容词
 
-# 查询某 Agent 当前状态
-@Hunter AI reddit-hunter 今天跑了多少 leads？
-
-# 广播给所有 Agent
-@Hunter AI all 今日重点：多发日本市场内容
-
 # 立即触发汇报
 @Hunter AI report now
+
+# 查询 Agent 状态（自然语言提问）
+@Hunter AI reddit-hunter 今天跑了多少 leads？
 ```
 
-## 汇报格式（每天早9/晚6）
+## 汇报格式（每天 BJT 09:00 早报 / 18:00 晚报）
 
 ```
 🌅 GTM 早报 2026-03-30
 
 reddit-hunter ✅ 在线
 📍 mac-mini-hangzhou | 👤 Boyuan | 🎯 reddit
-今日抓取: 23 leads | 高意向: 5
 
 • [Why SMBs lose calls on weekends...](https://reddit.com/...)  ❤️8 💬3
 • [We tested 5 AI receptionists...](https://reddit.com/...) ❤️12 💬7
@@ -61,48 +62,42 @@ reddit-hunter ✅ 在线
 ---
 
 x-poster ✅ 在线
-📍 windows-la | 👤 Ivy | 🎯 x,linkedin
+📍 windows-la | 👤 Ivy | 🎯 x linkedin
 • [Missed calls cost $X...](https://x.com/...) ❤️14 💬2
-• [Old way vs AI receptionist](https://x.com/...) ❤️8 💬5
 
 💬 点击链接查看详情，@Hunter AI + AgentName + taste: 反馈内容
 ```
 
-## 实现
+## 架构
 
-```bash
-#!/bin/bash
-SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG="$SKILL_DIR/agent_config.json"
+```
+钉钉群 @Hunter AI
+    ↓ Stream WebSocket
+orchestrator Mac (dingtalk-mkt-agent)
+    ↓ GitHub API
+inbox/{agent_name}/*.json
+    ↓ 15秒轮询
+worker.py（每台目标机器）
+    ↓ claude --print
+outbox/{agent_name}/*_result.json
+    ↑
+reporter.py（cron BJT 9:00 / 18:00）
+    ↓
+钉钉群早晚报
+```
 
-case "${1:-}" in
-  install)
-    bash "$SKILL_DIR/scripts/install.sh"
-    ;;
-  report)
-    python3 "$SKILL_DIR/scripts/reporter.py" "$CONFIG" "${2:-morning}"
-    ;;
-  status)
-    python3 -c "
-import json, os
-cfg = json.load(open('$CONFIG'))
-pid_file = '${SKILL_DIR}/worker.pid'
-pid = open(pid_file).read().strip() if os.path.exists(pid_file) else None
-running = False
-if pid:
-    try:
-        os.kill(int(pid), 0)
-        running = True
-    except Exception:
-        pass
-print(f\"Agent: {cfg['agent_name']}\")
-print(f\"Worker: {'运行中 PID '+pid if running else '未运行'}\")
-print(f\"平台: {cfg['platforms']}\")
-print(f\"位置: {cfg['location']}\")
-"
-    ;;
-  *)
-    python3 "$SKILL_DIR/scripts/worker.py" "$CONFIG"
-    ;;
-esac
+## 文件结构
+
+```
+scripts/
+  bootstrap.sh   # 一键安装入口（curl | bash）
+  install.sh     # 主安装脚本（clone 后调用）
+  register.py    # 注册到 GitHub agent bus
+  worker.py      # 守护进程：15s 轮询 inbox，执行 taste/prompt/command
+  reporter.py    # 生成早晚报并推送钉钉
+
+playbooks/
+  x_playbook.md        # X 平台品牌声音 + Taste 评分标准
+  reddit_playbook.md   # Reddit 平台规范
+  linkedin_playbook.md # LinkedIn 平台规范
 ```
