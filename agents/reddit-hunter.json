@@ -1,0 +1,13 @@
+{
+  "agent_name": "reddit-hunter",
+  "owner": "Wayne",
+  "location": "macbook-wayne",
+  "platforms": "reddit",
+  "accounts": {
+    "reddit": "Crissa_Alvirra"
+  },
+  "status": "online",
+  "last_seen": "2026-03-30T23:10:00Z",
+  "installed_at": "2026-03-30T23:04:22Z",
+  "version": "1.0.0"
+}
