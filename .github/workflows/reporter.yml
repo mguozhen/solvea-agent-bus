@@ -1,30 +1,25 @@
 name: GTM Reporter
 on:
   workflow_dispatch:
-      inputs:
-            report_type:
-                    description: morning or evening
-                            default: morning
-                              schedule:
-                                  - cron: '0 1 * * *'
-                                      - cron: '0 10 * * *'
-                                      jobs:
-                                        report:
-                                            runs-on: ubuntu-latest
-                                                steps:
-                                                      - uses: actions/checkout@v4
-                                                            - uses: actions/setup-python@v5
-                                                                    with:
-                                                                              python-version: '3.11'
-                                                                                    - name: Send report
-                                                                                            run: |
-                                                                                                      RTYPE="${{ github.event.inputs.report_type }}"
-                                                                                                                [ -z "$RTYPE" ] && RTYPE=morning
-                                                                                                                          TOKEN="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"
-                                                                                                                                    python3 - <<PYEOF
-                                                                                                                                              import json, sys
-                                                                                                                                                        sys.argv = ['reporter.py', '/tmp/cfg.json', '$RTYPE']
-                                                                                                                                                                  cfg = {"agent_name":"solvea-jp","platforms":"x","location":"windows-cowork","owner":"Hunter","accounts":{"x":"solvea_jp"},"github_token":"$TOKEN","github_repo":"mguozhen/solvea-agent-bus","dingtalk_webhook":"https://oapi.dingtalk.com/robot/send?access_token=0c99a28c3a98fc33dc6d193c66a5d792d1dd9af701238bd7a398b46010fdeae5"}
-                                                                                                                                                                            open('/tmp/cfg.json','w').write(json.dumps(cfg))
-                                                                                                                                                                                      exec(open('scripts/reporter.py').read())
-                                                                                                                                                                                                PYEOF
+    inputs:
+      report_type:
+        description: 'morning or evening'
+        default: morning
+  schedule:
+    - cron: '0 1 * * *'
+    - cron: '0 10 * * *'
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install requests
+      - name: Send report
+        run: python scripts/reporter.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DINGTALK_WEBHOOK: https://oapi.dingtalk.com/robot/send?access_token=0c99a28c3a98fc33dc6d193c66a5d792d1dd9af701238bd7a398b46010fdeae5
