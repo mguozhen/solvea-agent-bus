@@ -7,10 +7,13 @@ Solvea Social Monitor — Reporter
 import json, sys, os, urllib.request, urllib.error, base64
 from datetime import datetime, timezone
 
-CONFIG = json.load(open(sys.argv[1])) if len(sys.argv) > 1 else {}
-TOKEN  = CONFIG.get("github_token") or os.environ.get("GITHUB_TOKEN", "")
-REPO   = "mguozhen/solvea-agent-bus"
-WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=4a47078e35dc6c1d1fb35138de11aea008d476e0cd04a273c58d826e396a9371"
+CONFIG   = json.load(open(sys.argv[1])) if len(sys.argv) > 1 else {}
+TOKEN    = CONFIG.get("github_token") or os.environ.get("GITHUB_TOKEN", "")
+REPO     = "mguozhen/solvea-agent-bus"
+WEBHOOK  = CONFIG.get("dingtalk_webhook", "https://oapi.dingtalk.com/robot/send?access_token=4a47078e35dc6c1d1fb35138de11aea008d476e0cd04a273c58d826e396a9371")
+CONV_ID  = CONFIG.get("dingtalk_conv_id", "cid13BaabhcPB/tVfF10dwfyA==")
+APP_KEY  = CONFIG.get("dingtalk_app_key", "ding3shkntgajgeigymb")
+APP_SECRET = CONFIG.get("dingtalk_app_secret", "")
 
 REPORT_TYPE = sys.argv[2] if len(sys.argv) > 2 else "morning"  # morning / evening
 
@@ -134,7 +137,39 @@ def format_agent_block(agent):
     return block.strip()
 
 
+def _get_dingtalk_token():
+    """获取钉钉 App access token"""
+    url = "https://api.dingtalk.com/v1.0/oauth2/accessToken"
+    payload = json.dumps({"appKey": APP_KEY, "appSecret": APP_SECRET}).encode()
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=10) as r:
+        return json.loads(r.read()).get("accessToken", "")
+
+
 def send_dingtalk(text, title="GTM 汇报"):
+    """优先用 App API（显示 MarketClaude 身份），fallback 到 webhook"""
+    if APP_SECRET and CONV_ID:
+        try:
+            access_token = _get_dingtalk_token()
+            url = "https://api.dingtalk.com/v1.0/robot/groupMessages/send"
+            payload = json.dumps({
+                "robotCode": APP_KEY,
+                "openConversationId": CONV_ID,
+                "msgKey": "sampleMarkdown",
+                "msgParam": json.dumps({"title": title, "text": text})
+            }).encode()
+            req = urllib.request.Request(url, data=payload, headers={
+                "Content-Type": "application/json",
+                "x-acs-dingtalk-access-token": access_token
+            })
+            with urllib.request.urlopen(req, timeout=10) as r:
+                result = json.loads(r.read())
+                if result.get("processQueryKey"):
+                    return result
+        except Exception as e:
+            print(f"[App API failed, fallback to webhook] {e}", flush=True)
+
+    # Fallback: webhook robot
     payload = json.dumps({
         "msgtype": "markdown",
         "markdown": {"title": title, "text": text}
@@ -169,7 +204,7 @@ def main():
 
     body = header
     body += "\n\n---\n\n".join(blocks)
-    body += f"\n\n---\n💬 _点击帖子链接查看详情，@Hunter AI + AgentName + taste: 反馈内容_"
+    body += f"\n\n---\n💬 _@MarketClaude {{AgentName}} taste: 反馈内容_"
 
     # 超过 4000 字分段发
     if len(body) > 4000:

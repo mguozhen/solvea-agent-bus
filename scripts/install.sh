@@ -12,6 +12,7 @@ CONFIG="$DIR/agent_config.json"
 
 # ── MarketClaude 认证信息（全团队共享，安装即可用）──────────────────
 DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=4a47078e35dc6c1d1fb35138de11aea008d476e0cd04a273c58d826e396a9371"
+DINGTALK_CONV_ID="cid13BaabhcPB/tVfF10dwfyA=="
 DINGTALK_APP_ID="91e7ed27-fe07-40fa-8dd7-aa02d910e8d6"
 DINGTALK_AGENT_ID="4409222837"
 DINGTALK_APP_KEY="ding3shkntgajgeigymb"
@@ -61,6 +62,7 @@ else
   "github_token": "$GITHUB_TOKEN",
   "github_repo": "$GITHUB_REPO",
   "dingtalk_webhook": "$DINGTALK_WEBHOOK",
+  "dingtalk_conv_id": "$DINGTALK_CONV_ID",
   "dingtalk_app_id": "$DINGTALK_APP_ID",
   "dingtalk_agent_id": "$DINGTALK_AGENT_ID",
   "dingtalk_app_key": "$DINGTALK_APP_KEY",
