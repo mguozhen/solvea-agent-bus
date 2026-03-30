@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 CONFIG = json.load(open(sys.argv[1])) if len(sys.argv) > 1 else {}
 TOKEN  = CONFIG.get("github_token") or os.environ.get("GITHUB_TOKEN", "")
 REPO   = "mguozhen/solvea-agent-bus"
-WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=0c99a28c3a98fc33dc6d193c66a5d792d1dd9af701238bd7a398b46010fdeae5"
+WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=4a47078e35dc6c1d1fb35138de11aea008d476e0cd04a273c58d826e396a9371"
 
 REPORT_TYPE = sys.argv[2] if len(sys.argv) > 2 else "morning"  # morning / evening
 
