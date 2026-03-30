@@ -6,10 +6,11 @@ set -e
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 CONFIG="$DIR/agent_config.json"
 
-# ── 内置认证信息（无需手动配置）──────────────────────────────────────
+# ── 内置认证信息（全团队共享，安装即可用）────────────────────────────
 DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=0c99a28c3a98fc33dc6d193c66a5d792d1dd9af701238bd7a398b46010fdeae5"
 DINGTALK_APP_KEY="ding3shkntgajgeigymb"
 DINGTALK_APP_SECRET="f2GBQzDl_dPXsBF9G9Ftsvby5G9JxtpX6kdvD6FfKBxQlOZzMvSbijqdAD0ZM5Nj"
+GITHUB_TOKEN="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"
 GITHUB_REPO="mguozhen/solvea-agent-bus"
 
 echo "========================================"
@@ -39,12 +40,7 @@ else
   read -p "Reddit 账号: " REDDIT_ACCOUNT
   read -p "LinkedIn 账号: " LINKEDIN_ACCOUNT
 
-  echo ""
-  echo "【第三步：GitHub Token（用于 Agent Bus 通信）】"
-  echo "前往 https://github.com/settings/tokens 新建 Token（需要 repo 权限）"
-  read -p "GitHub Token: " GITHUB_TOKEN
-
-  # 写入配置（钉钉认证已内置）
+  # 写入配置（所有认证已内置，无需手动配置）
   cat > "$CONFIG" <<EOF
 {
   "agent_name": "$AGENT_NAME",
