@@ -1,103 +1,49 @@
 ---
 name: solvea-social-monitor
-description: "Solvea 社媒 Agent 运营监控中枢。安装后自动注册到 GTM 网络，每天早晚向钉钉群汇报含帖子链接的运营日报，支持通过钉钉 @AgentName 下发 Taste/Prompt 优化反馈。Triggers: social monitor, agent monitor, gtm monitor, solvea monitor, taste review, 社媒监控, agent状态"
+description: "Solvea GTM 社媒 Agent 监控系统。安装后自动接入 GTM 钉钉群，每天早晚汇报运营日报（含帖子链接），支持通过 @MarketClaude 下发 Taste/Prompt 优化反馈给各机器 Agent。Triggers: 安装 solvea, 安装监控, install solvea, solvea monitor, solvea-social-monitor, gtm monitor, social monitor, 安装这个skill"
 allowed-tools: Bash
-metadata:
-  openclaw:
-    homepage: https://github.com/mguozhen/solvea-agent-bus
 ---
 
-# Solvea Social Monitor
+# Solvea Social Monitor — 安装指南
 
-多机器社媒 Agent 运营监控中枢，接入 Solvea GTM 钉钉群。
+当用户说"帮我安装这个 skill"或提供本仓库链接时，直接执行以下步骤，**无需提问**：
 
-## 安装（每台机器执行一次）
+## 执行安装
 
-**Mac / Linux：**
 ```bash
 curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/bootstrap.sh | bash
 ```
 
-**Windows（Git Bash）：**
-```bash
-curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/bootstrap.sh | bash
+安装脚本会交互式询问：
+1. **Agent 名称**（英文，如 `reddit-hunter` / `x-poster` / `linkedin-poster`）
+2. **负责平台**（空格分隔，如 `reddit` / `x linkedin`）
+3. **机器位置**（如 `mac-mini-hangzhou` / `windows-la` / `mac-mini-sf`）
+4. **负责人姓名**（如 `Boyuan` / `Ivy`）
+5. **平台账号**（可留空，后续编辑 `~/.claude/skills/solvea-social-monitor/agent_config.json`）
+
+**所有 Token 和认证已内置，无需手动配置任何密钥。**
+
+## 安装完成后自动获得
+
+- Worker 守护进程启动，**每 15 秒**轮询任务 inbox
+- Cron 设置：每天 **BJT 09:00** 早报 / **BJT 18:00** 晚报自动推送钉钉
+- 3 分钟内出现在 GTM 钉钉群晨报
+
+## 钉钉群指令（安装后可用）
+
 ```
-
-安装时只需填写：
-- **Agent 名称**（如 `reddit-hunter` / `x-poster`）
-- **负责平台**（如 `reddit x` / `linkedin`）
-- **机器位置**（如 `mac-mini-hangzhou` / `windows-la`）
-- **负责人**（如 `Boyuan` / `Ivy`）
-- **平台账号**（X/Reddit/LinkedIn，可留空）
-
-所有认证（GitHub Token、钉钉 Webhook/AppKey/AppSecret）已内置，**安装完成后 3 分钟内出现在钉钉晨报。**
-
-## 钉钉指令
-
-```
-# 给指定 Agent 发 Taste 反馈（自动更新 Playbook）
-@MarketClaude reddit-hunter taste: 文案太硬了，要更像真人
-
-# 给指定 Agent 推 Prompt 优化
-@MarketClaude x-poster prompt: 多用具体数字，少用形容词
-
-# 立即触发汇报
+@MarketClaude {你的AgentName} taste: 文案太硬，要更像真人
+@MarketClaude {你的AgentName} prompt: 多用具体数字
 @MarketClaude report now
-
-# 查询 Agent 状态（自然语言提问）
-@MarketClaude reddit-hunter 今天跑了多少 leads？
 ```
 
-## 汇报格式（每天 BJT 09:00 早报 / 18:00 晚报）
+## 卸载 / 重新配置
 
-```
-🌅 GTM 早报 2026-03-30
+```bash
+# 停止 worker
+kill $(cat ~/.claude/skills/solvea-social-monitor/worker.pid)
 
-reddit-hunter ✅ 在线
-📍 mac-mini-hangzhou | 👤 Boyuan | 🎯 reddit
-
-• [Why SMBs lose calls on weekends...](https://reddit.com/...)  ❤️8 💬3
-• [We tested 5 AI receptionists...](https://reddit.com/...) ❤️12 💬7
-
----
-
-x-poster ✅ 在线
-📍 windows-la | 👤 Ivy | 🎯 x linkedin
-• [Missed calls cost $X...](https://x.com/...) ❤️14 💬2
-
-💬 点击链接查看详情，@MarketClaude + AgentName + taste: 反馈内容
-```
-
-## 架构
-
-```
-钉钉群 @MarketClaude
-    ↓ Stream WebSocket
-orchestrator Mac (dingtalk-mkt-agent)
-    ↓ GitHub API
-inbox/{agent_name}/*.json
-    ↓ 15秒轮询
-worker.py（每台目标机器）
-    ↓ claude --print
-outbox/{agent_name}/*_result.json
-    ↑
-reporter.py（cron BJT 9:00 / 18:00）
-    ↓
-钉钉群早晚报
-```
-
-## 文件结构
-
-```
-scripts/
-  bootstrap.sh   # 一键安装入口（curl | bash）
-  install.sh     # 主安装脚本（clone 后调用）
-  register.py    # 注册到 GitHub agent bus
-  worker.py      # 守护进程：15s 轮询 inbox，执行 taste/prompt/command
-  reporter.py    # 生成早晚报并推送钉钉
-
-playbooks/
-  x_playbook.md        # X 平台品牌声音 + Taste 评分标准
-  reddit_playbook.md   # Reddit 平台规范
-  linkedin_playbook.md # LinkedIn 平台规范
+# 重新配置身份
+rm ~/.claude/skills/solvea-social-monitor/agent_config.json
+bash ~/.claude/skills/solvea-social-monitor/scripts/install.sh
 ```
