@@ -10,8 +10,10 @@ else
 fi
 CONFIG="$DIR/agent_config.json"
 
-# ── 内置认证信息（全团队共享，安装即可用）────────────────────────────
+# ── MarketClaude 认证信息（全团队共享，安装即可用）──────────────────
 DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=0c99a28c3a98fc33dc6d193c66a5d792d1dd9af701238bd7a398b46010fdeae5"
+DINGTALK_APP_ID="91e7ed27-fe07-40fa-8dd7-aa02d910e8d6"
+DINGTALK_AGENT_ID="4409222837"
 DINGTALK_APP_KEY="ding3shkntgajgeigymb"
 DINGTALK_APP_SECRET="f2GBQzDl_dPXsBF9G9Ftsvby5G9JxtpX6kdvD6FfKBxQlOZzMvSbijqdAD0ZM5Nj"
 GITHUB_TOKEN="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"
@@ -58,6 +60,8 @@ else
   "github_token": "$GITHUB_TOKEN",
   "github_repo": "$GITHUB_REPO",
   "dingtalk_webhook": "$DINGTALK_WEBHOOK",
+  "dingtalk_app_id": "$DINGTALK_APP_ID",
+  "dingtalk_agent_id": "$DINGTALK_AGENT_ID",
   "dingtalk_app_key": "$DINGTALK_APP_KEY",
   "dingtalk_app_secret": "$DINGTALK_APP_SECRET",
   "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -112,7 +116,7 @@ echo "========================================"
 echo "  ✅ [$AGENT_NAME] 安装完成，已接入 GTM 网络"
 echo ""
 echo "  钉钉群指令："
-echo "  @Hunter AI $AGENT_NAME taste: 反馈内容"
-echo "  @Hunter AI $AGENT_NAME prompt: 优化策略"
-echo "  @Hunter AI report now         立即触发汇报"
+echo "  @MarketClaude $AGENT_NAME taste: 反馈内容"
+echo "  @MarketClaude $AGENT_NAME prompt: 优化策略"
+echo "  @MarketClaude report now         立即触发汇报"
 echo "========================================"

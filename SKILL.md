@@ -36,16 +36,16 @@ curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scrip
 
 ```
 # 给指定 Agent 发 Taste 反馈（自动更新 Playbook）
-@Hunter AI reddit-hunter taste: 文案太硬了，要更像真人
+@MarketClaude reddit-hunter taste: 文案太硬了，要更像真人
 
 # 给指定 Agent 推 Prompt 优化
-@Hunter AI x-poster prompt: 多用具体数字，少用形容词
+@MarketClaude x-poster prompt: 多用具体数字，少用形容词
 
 # 立即触发汇报
-@Hunter AI report now
+@MarketClaude report now
 
 # 查询 Agent 状态（自然语言提问）
-@Hunter AI reddit-hunter 今天跑了多少 leads？
+@MarketClaude reddit-hunter 今天跑了多少 leads？
 ```
 
 ## 汇报格式（每天 BJT 09:00 早报 / 18:00 晚报）
@@ -65,13 +65,13 @@ x-poster ✅ 在线
 📍 windows-la | 👤 Ivy | 🎯 x linkedin
 • [Missed calls cost $X...](https://x.com/...) ❤️14 💬2
 
-💬 点击链接查看详情，@Hunter AI + AgentName + taste: 反馈内容
+💬 点击链接查看详情，@MarketClaude + AgentName + taste: 反馈内容
 ```
 
 ## 架构
 
 ```
-钉钉群 @Hunter AI
+钉钉群 @MarketClaude
     ↓ Stream WebSocket
 orchestrator Mac (dingtalk-mkt-agent)
     ↓ GitHub API
