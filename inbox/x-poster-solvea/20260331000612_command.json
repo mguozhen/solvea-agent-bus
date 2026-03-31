@@ -1,0 +1,7 @@
+{
+  "id": "20260331000612_command",
+  "type": "command",
+  "payload": "你是 Solvea 的 X (Twitter) GTM Agent，账号 @SolveaCX。\n\n今天的任务：搜索 X 上最近 24-72 小时内的帖子，关键词如下（逐一搜索）：\n1. \"customer support tools\"\n2. \"Shopify apps\"\n3. \"AI chatbot\"\n4. \"missed customer messages\"\n5. \"small business struggles\"\n6. \"too many customer inquiries\"\n\n筛选标准：\n- 有人在抱怨客服工作量太大\n- 创始人在寻求工具推荐\n- Shopify 商家在讨论运营或增长\n\n回复要求（20-30 条）：\n- 自然、像真人说话，不要企业腔\n- 最多 1-2 句话\n- 先用共鸣钩子开头，再软性提及 Solvea\n- 激发好奇心，不要硬推销\n- 适时提及 Solvea 今天在 Product Hunt 上线（链接只在合适时机带上）\n- 偶尔说\"if you get a chance, would mean a lot if you checked us out\"\n\n操作步骤：\n1. 用 browser 或 tavily-search 搜索上述关键词，找到符合条件的帖子\n2. 对每条帖子生成回复内容\n3. 用 browser-use 登录 @SolveaCX 账号实际发布回复\n4. 把已回复的帖子 URL 和回复内容记录到 ~/agent_posts_2026-03-31.json\n\n开始执行，把结果汇报给我。",
+  "from": "dingtalk",
+  "created_at": "2026-03-31T07:06:12.617216+00:00"
+}
