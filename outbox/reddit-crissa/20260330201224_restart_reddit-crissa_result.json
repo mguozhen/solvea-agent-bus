@@ -1,0 +1,6 @@
+{
+  "task_id": "20260330201224_restart_reddit-crissa",
+  "agent": "reddit-crissa",
+  "result": "✅ Worker 已在运行 (PID 45226)，跳过重启。agent=reddit-crissa，状态正常。",
+  "completed_at": "2026-03-31T03:21:19.786954+00:00"
+}
