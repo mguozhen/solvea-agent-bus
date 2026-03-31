@@ -1,0 +1,7 @@
+{
+  "id": "20260331041543_command",
+  "type": "command",
+  "payload": "立即唤醒，执行 Product Hunt 发布日互动专项任务：\n\n1. 搜索关键词（过去72小时）：\"customer support tools\" / \"Shopify apps\" / \"AI chatbot\" / \"missed customer messages\" / \"small business struggles\" / \"too many customer inquiries\"\n\n2. 筛选目标帖子：(a) 抱怨客服工作量太重的, (b) 求工具推荐的创始人, (c) 讨论运营/增长的 Shopify 卖家\n\n3. 回复风格（严格执行）：\n- 1-2句话，不超过\n- 先放共鸣钩子（\"omg same struggle...\", \"we literally built X because of this\"）\n- 自然带出 Solvea，不硬销\n- 偶尔加：\"would mean a lot if you checked us out on Product Hunt today\"\n- 禁止企业腔/AI腔\n\n4. 目标：回复20-30条相关帖子\n\n5. Product Hunt 链接：https://www.producthunt.com/posts/solvea — 只在场景自然时带上\n\n执行完毕后输出结果到 outbox。",
+  "from": "wayne_direct",
+  "created_at": "2026-03-31T04:15:43Z"
+}
