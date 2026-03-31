@@ -1,0 +1,7 @@
+{
+  "id": "20260330201226_restart_x-poster-solvea",
+  "type": "command",
+  "payload": "kill $(cat ~/.claude/skills/solvea-social-monitor/worker.pid 2>/dev/null) 2>/dev/null; sleep 1; bash ~/.claude/skills/solvea-social-monitor/scripts/install.sh",
+  "from": "MarketClaude",
+  "created_at": "2026-03-31T03:12:26.340587+00:00"
+}
