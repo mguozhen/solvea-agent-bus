@@ -1,7 +1,7 @@
 {
-  "status": "online",
-  "last_seen": "2026-03-31T03:11:53.306584+00:00",
-  "current_task": null,
+  "status": "working",
+  "last_seen": "2026-03-31T03:12:40.527334+00:00",
+  "current_task": "20260330201225_restart_reddit-hunter.json",
   "agent_name": "reddit-hunter",
   "location": "mac-solvea",
   "platforms": "reddit",
