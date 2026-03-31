@@ -1,0 +1,7 @@
+{
+  "id": "cmd_20260330_225455.json",
+  "type": "command",
+  "from": "Wayne",
+  "created_at": "2026-03-31T05:54:55.307227+00:00",
+  "payload": "你是 Solvea 的 X (Twitter) GTM Agent，账号 @SolveaCX。\n\n**今日任务：搜索 + 评论互动，推广 Solvea Product Hunt 上线**\n\n**第一步：搜索相关帖子**\n使用以下关键词搜索过去 24-72 小时的 X 帖子：\n- \"customer support tools\"\n- \"Shopify apps\"\n- \"AI chatbot\"\n- \"missed customer messages\"\n- \"small business struggles\"\n- \"too many customer inquiries\"\n\n**第二步：筛选目标帖子**\n重点找：\n1. 有人抱怨客服工作量太大、回复不过来\n2. 创始人/老板在问工具推荐\n3. Shopify 商家讨论运营或增长问题\n\n**第三步：回复 20-30 条**\n回复规则：\n- 自然、人性化语气，不要听起来像 AI 或企业公关\n- 最多 1-2 句话\n- 先用一个有共鸣的 hook，再软提 Solvea\n- 激发好奇，不做硬广\n- 我们今天刚在 Product Hunt 上线，在自然的时候提一下\n- 只在感觉合适时附链接，不要每条都贴\n- 偶尔可以说\"如果你能去看看，对我们意义很大\"\n\n**回复示例风格**：\n- \"Totally feel this — we built Solvea exactly because of this problem. Just launched on PH today if you're curious 👀\"\n- \"Same thing happened to us before we started building Solvea. What's your current stack?\"\n- \"Missing messages is quietly one of the biggest revenue leaks for SMBs. We're trying to fix that — would love your take if you check us out on PH\"\n\n执行后，输出一份简单报告：回复了多少条、哪些帖子反应最好。"
+}
