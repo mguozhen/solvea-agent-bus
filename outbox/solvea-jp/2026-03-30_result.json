@@ -5,22 +5,19 @@
     "platform": "x",
     "account": "@solvea_jp",
     "date": "2026-03-30",
-    "report_time": "2026-03-30T13:58:00+09:00",
+    "report_time": "2026-03-30T22:00:00+09:00",
     "status": "active",
-    "posts": [
-          {
-                  "id": "2038722655629816120",
-                  "url": "https://x.com/solvea_jp/status/2038722655629816120",
-                  "posted_at": "2026-03-30T13:58:00+09:00",
-                  "views": 4,
-                  "likes": 1,
-                  "language": "ja",
-                  "series": "Build in Public #3"
-          }
-    ],
-    "engagement": {
-          "total_posts": 1,
-          "followers_count": 0
+    "result": {
+        "posts_today": [
+            {
+                "platform": "x",
+                "url": "https://x.com/solvea_jp/status/2038722655629816120",
+                "title": "Build in Public #3 - 顧客の声レポート",
+                "likes": 1,
+                "comments": 0,
+                "views": 4
+            }
+        ]
     },
-    "notes": "Day 1 active. Build in Public series started for Japan market."
+    "notes": "Build in Public #3 posted. Japan market launch day 1. Evening report."
 }
