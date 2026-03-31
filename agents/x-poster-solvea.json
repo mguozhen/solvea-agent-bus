@@ -9,7 +9,8 @@
     "linkedin": ""
   },
   "status": "online",
-  "last_seen": "2026-03-31T04:41:30.314847+00:00",
+  "last_seen": "2026-03-31T04:41:33.596741+00:00",
   "installed_at": "2026-03-30T07:50:00Z",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "current_task": null
 }
