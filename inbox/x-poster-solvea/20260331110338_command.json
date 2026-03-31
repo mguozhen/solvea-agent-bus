@@ -1,0 +1,7 @@
+{
+  "id": "20260331110338_command",
+  "type": "command",
+  "payload": "Search on X for posts from business owners, founders, CEO’s (last 7 days) using keywords like:\n\t•\t“customer support tools”\n\t•\t“Shopify apps”\n\t•\t“AI chatbot”\n\t•\t“missed customer messages”\n\t•\t“small business struggles”\n\t•\t“too many customer inquiries”\n\t2.\tIdentify posts where:\n\t•\tPeople are actively complaining about support workload\n\t•\tFounders are asking for tool recommendations\n\t•\tShopify merchants are discussing ops or growth\n\t3.\tReply to 20-30 relevant posts per day with:\n\t•\tA natural, human tone (no corporate or AI-sounding language)\n\t•\t1-2 sentences max\n\t•\tA relatable hook first, then soft mention of Solvea\n\t•\tInvite curiosity, not a hard sell\n\t4.\tSubtly plug Solvea + Product Hunt launch:\n\t•\tMention you’re launching today (or recently launched)\n\t•\tInclude link ONLY when it feels natural\n\t•\tOccasionally ask for support (“would mean a lot if you checked us out”)",
+  "from": "dingtalk",
+  "created_at": "2026-03-31T18:03:38.687778+00:00"
+}
