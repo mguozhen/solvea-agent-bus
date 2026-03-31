@@ -6,17 +6,21 @@ allowed-tools: Bash
 
 # Solvea Social Monitor — GTM Agent 网络接入
 
-## 一句话安装（推荐）
+## 安装方式
 
-直接告诉 Claude Code：
+### 方式一：clawhub 一键安装（推荐，全新机器）
+
+```bash
+clawhub install solvea-social-monitor
+```
+
+安装后直接告诉 Claude Code：
 
 > **"帮我接入 Solvea GTM 网络，Agent 名称 xxx，负责平台 reddit，机器位置 mac-mini-sf，负责人 Ivy"**
 
-Claude 会自动运行安装脚本并完成配置，**无需手动操作任何步骤**。
+Claude 自动完成全部配置，无需手动操作任何步骤。
 
----
-
-## 手动安装
+### 方式二：curl 脚本
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/mguozhen/solvea-agent-bus/main/scripts/bootstrap.sh | bash
