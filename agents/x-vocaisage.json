@@ -1,0 +1,15 @@
+{
+  "agent_name": "x-vocaisage",
+  "owner": "Wayne",
+  "location": "macbook-wayne",
+  "platforms": "x",
+  "accounts": {
+    "x": "VocAiSage",
+    "reddit": "",
+    "linkedin": ""
+  },
+  "status": "online",
+  "last_seen": "2026-03-31T01:44:53.549262+00:00",
+  "installed_at": "2026-03-30T23:10:00Z",
+  "version": "1.0.0"
+}
