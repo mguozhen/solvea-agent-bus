@@ -1,0 +1,14 @@
+{
+  "agent_name": "x-voc_ai",
+  "owner": "Hunter",
+  "location": "硅谷二号",
+  "platforms": "x",
+  "accounts": {
+    "x": "VOC_ai"
+  },
+  "status": "online",
+  "last_seen": "2026-03-31T02:54:04.624Z",
+  "current_task": null,
+  "installed_at": "2026-03-31T02:54:04.624Z",
+  "version": "1.0.0"
+}
