@@ -8,9 +8,9 @@
     "reddit": "",
     "linkedin": ""
   },
-  "status": "online",
-  "last_seen": "2026-03-31T10:42:28.251274+00:00",
+  "status": "working",
+  "last_seen": "2026-03-31T10:42:29.944901+00:00",
   "installed_at": "2026-03-30T07:50:00Z",
   "version": "1.0.0",
-  "current_task": null
+  "current_task": "20260330171723_command.json"
 }
