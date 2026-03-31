@@ -204,7 +204,7 @@ def main():
 
     body = header
     body += "\n\n---\n\n".join(blocks)
-    body += f"\n\n---\n💬 _@MarketClaude {{AgentName}} taste: 反馈内容_"
+    body += f"\n\n---\n💬 _@MarketClaude {{AgentName}} taste/prompt/command: your message_"
 
     # 超过 4000 字分段发
     if len(body) > 4000:
