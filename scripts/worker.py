@@ -31,7 +31,7 @@ CLAUDE_BIN = _find_claude()
 WORK_DIR = CONFIG.get("work_dir") or os.path.expanduser("~")
 
 POLL_INTERVAL      = 15   # 15 秒
-HEARTBEAT_INTERVAL = 120  # 2 分钟
+HEARTBEAT_INTERVAL = 10   # 10 秒
 
 _last_heartbeat = 0
 _processed_tasks = set()   # 防重复，上限 500 条后清理旧的
