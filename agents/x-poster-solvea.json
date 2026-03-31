@@ -8,9 +8,9 @@
     "reddit": "",
     "linkedin": ""
   },
-  "status": "online",
-  "last_seen": "2026-03-31T07:25:28.400469+00:00",
+  "status": "working",
+  "last_seen": "2026-03-31T07:26:46.156033+00:00",
   "installed_at": "2026-03-30T07:50:00Z",
   "version": "1.0.0",
-  "current_task": null
+  "current_task": "20260330201226_restart_x-poster-solvea.json"
 }
