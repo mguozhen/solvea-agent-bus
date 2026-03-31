@@ -1,0 +1,7 @@
+{
+  "id": "20260330170846_command",
+  "type": "command",
+  "payload": "搜索Retell和Vapi最新动态，以竞争对手视角找出其弱点（价格/稳定性/语言支持/集成复杂度等），生成一批突出Solvea优势的推文并发布。Solvea优势：$30/月 all-in、无代码、支持语音+SMS+WhatsApp+LINE，已服务Anker/Dreame",
+  "from": "dingtalk",
+  "created_at": "2026-03-31T00:08:46.143032+00:00"
+}
