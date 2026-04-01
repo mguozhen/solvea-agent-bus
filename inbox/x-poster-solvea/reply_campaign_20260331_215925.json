@@ -1,0 +1,47 @@
+{
+  "id": "reply_campaign_20260331_215925",
+  "type": "command",
+  "created_at": "2026-03-31T18:00:00Z",
+  "payload": "You are the @SolveaCX X (Twitter) account operator. Execute the following Product Hunt reply campaign.
+
+## GOAL
+Find and reply to 20-30 posts on X from the last 24-72 hours. Focus on people experiencing customer support pain.
+
+## SEARCHES (use browser-use to open each URL)
+1. https://x.com/search?q=%22customer+support+tools%22&f=live
+2. https://x.com/search?q=%22Shopify+apps%22&f=live
+3. https://x.com/search?q=%22AI+chatbot%22&f=live
+4. https://x.com/search?q=%22missed+customer+messages%22&f=live
+5. https://x.com/search?q=%22small+business+struggles%22&f=live
+6. https://x.com/search?q=%22too+many+customer+inquiries%22&f=live
+
+## TARGET POSTS
+- People actively complaining about support workload or missed messages
+- Founders/merchants asking for tool recommendations
+- Shopify merchants discussing ops/growth pain
+
+## REPLY RULES
+- Natural founder voice — NOT corporate, NOT AI-sounding
+- 1-2 sentences MAX
+- Start with relatable hook (empathy/acknowledgment), then soft Solvea mention
+- Invite curiosity, not hard sell
+- Include https://solvea.cx only when feels natural (not every reply)
+- 1 in 5 replies: mention Product Hunt launch today
+- NEVER: amazing, revolutionary, game-changing, excited to announce
+- NEVER start with: Our product / Check out / We built
+
+## EXAMPLE REPLIES (adapt, don't copy verbatim)
+- \"Ugh, been there — one missed message can cost a client. We just launched Solvea on Product Hunt for exactly this pain. Curious what you've tried?\"
+- \"The support queue problem is real. We're a small team building something for this — just went live today if you want a look.\"
+- \"Honestly the hardest part of running a small biz isn't the product, it's keeping up with customers. Working on that at solvea.cx.\"
+- \"Same. We ended up building our own fix — Solvea. Just launched on PH today, would mean a lot if you checked it out.\"
+
+## EXECUTION
+1. Open each search URL
+2. Scroll through results, identify 3-5 relevant posts per keyword
+3. Click reply on each relevant post, type reply, submit
+4. Log results to ~/agent_posts_2026-03-31.json as [{\"post_url\": \"...\", \"reply\": \"...\", \"timestamp\": \"...\"}]
+5. Report summary: how many posts found, how many replies sent, any issues
+
+Start now. Open the browser and begin with search #1."
+}
