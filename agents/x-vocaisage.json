@@ -9,8 +9,8 @@
     "linkedin": ""
   },
   "status": "working",
-  "last_seen": "2026-04-01T05:31:25.501425+00:00",
+  "last_seen": "2026-04-01T05:33:42.097424+00:00",
   "installed_at": "2026-03-30T23:10:00Z",
   "version": "1.0.0",
-  "current_task": "20260330191709_command.json"
+  "current_task": "20260330201227_restart_x-vocaisage.json"
 }
