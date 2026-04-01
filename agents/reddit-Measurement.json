@@ -8,9 +8,9 @@
     "reddit": "Far-Measurement-3644",
     "linkedin": ""
   },
-  "status": "online",
-  "last_seen": "2026-04-01T05:36:57.527488+00:00",
+  "status": "working",
+  "last_seen": "2026-04-01T05:36:58.952403+00:00",
   "installed_at": "2026-03-31T00:53:04Z",
   "version": "1.0.0",
-  "current_task": null
+  "current_task": "20260330201223_restart_reddit-Measurement.json"
 }
