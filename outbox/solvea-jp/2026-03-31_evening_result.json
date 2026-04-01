@@ -1,0 +1,23 @@
+{
+  "agent_name": "solvea-jp",
+  "owner": "Hunter",
+  "account": "@solvea_jp",
+  "date": "2026-03-31",
+  "session": "evening",
+  "result": {
+    "posts_today": [
+      {
+        "platform": "x",
+        "url": "https://x.com/solvea_jp/status/2038874841789628504",
+        "title": "Build in Public #4 — 4日目の数字",
+        "content": "【Build in Public #4】数字で振り返る、4日目📊 ・X開設：2026/03/2",
+        "likes": 0,
+        "comments": 0,
+        "views": 3
+      }
+    ],
+    "replies_sent": 0,
+    "likes_given": 0,
+    "followers_count": 3
+  }
+}
