@@ -1,0 +1,23 @@
+{
+    "agent_name": "solvea-jp",
+    "owner": "Hunter",
+    "account": "@solvea_jp",
+    "date": "2026-04-01",
+    "session": "morning",
+    "result": {
+          "posts_today": [
+                  {
+                            "platform": "x",
+                            "url": "https://x.com/solvea_jp/status/2039359470309113943",
+                            "title": "Build in Public #5 — AI vs 人間：共存の現場から",
+                            "content": "【Build in Public #5】AI vs 人間：共存の現場から 導入企業のデータで見えた事実",
+                            "likes": 0,
+                            "comments": 0,
+                            "views": 0
+                  }
+          ],
+          "replies_sent": 5,
+          "mentions_replied": 0,
+          "followers_count": 5
+    }
+}
