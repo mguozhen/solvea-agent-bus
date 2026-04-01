@@ -57,22 +57,32 @@ DISPATCH_RE = re.compile(
     r'^(\S+)\s+(taste|prompt|command):\s*(.+)$',
     re.IGNORECASE | re.DOTALL
 )
+# 多 agent 派发："{agent1},{agent2} command: {payload}" 或 "{agent1}和{agent2} command: {payload}"
+MULTI_DISPATCH_RE = re.compile(
+    r'^([\w\-]+(?:[,，和\s]+[\w\-]+)+)\s+(taste|prompt|command):\s*(.+)$',
+    re.IGNORECASE | re.DOTALL
+)
+# 自然语言派发："派发任务给 agent1和agent2，payload"
+NL_DISPATCH_RE = re.compile(
+    r'派发.*?给\s*([\w\-]+(?:[,，和\s]+[\w\-]+)*)[,，\s]+(.+)$',
+    re.IGNORECASE | re.DOTALL
+)
 # report now 触发立即汇报
 REPORT_RE = re.compile(r'^report\s+now', re.IGNORECASE)
 
 # GTM Agent 系统角色（注入到每条 prompt 前缀）
-ROLE_PREFIX = """你是 Solvea 公司的 GTM MKT Agent，代号 MarketClaude，在钉钉 GTM 群里工作。
+ROLE_PREFIX = """You are MarketClaude, Solvea's GTM MKT Agent operating in the GTM DingTalk group.
 
-背景：
-- Solvea 是 no-code AI 客服接待机器人（语音/SMS/邮件/WhatsApp/LINE/Chat），$30/月，24/7，已服务 Anker、Dreame
-- 当前重点：Reddit B2B 获客外联、SEO 内容、日本市场拓展
-- 工作目录：~/reddit-matrix-operator（外联脚本、leads 数据都在这里）
-- 你有完整的工具权限：可以读写文件、执行脚本、搜索网络
+Context:
+- Solvea is a no-code AI customer service bot (Voice/SMS/Email/WhatsApp/LINE/Chat), $30/mo, 24/7, serving Anker & Dreame
+- Current focus: Reddit B2B outreach, SEO content, Japan market expansion
+- Working dir: ~/reddit-matrix-operator (outreach scripts and leads data)
+- You have full tool access: read/write files, run scripts, search the web
 
-要求：
-- 直接给出结论和行动，不废话
-- 如果需要执行任务（跑脚本、查数据、搜索），直接做，把结果告诉我
-- 回复控制在 500 字以内，用中文
+Rules:
+- Lead with conclusions and actions, no filler
+- If a task needs execution (run script, query data, search), do it and report results
+- Keep replies under 300 words, respond in English
 
 """
 
@@ -96,9 +106,15 @@ def gh_write_file(path, content_str, message):
         return False
 
 
+def parse_agent_names(raw: str) -> list[str]:
+    """从 'agent1和agent2' / 'agent1,agent2' / 'agent1 agent2' 解析 agent 列表"""
+    parts = re.split(r'[,，和\s]+', raw.strip())
+    return [p.strip() for p in parts if p.strip()]
+
+
 def dispatch_to_agent(agent_name: str, task_type: str, payload: str) -> str:
     if not GITHUB_TOKEN:
-        return "⚠️ 未配置 GITHUB_TOKEN，无法派发任务。请在 .env 中添加 GITHUB_TOKEN。"
+        return "⚠️ GITHUB_TOKEN not configured. Add it to .env to enable task dispatch."
 
     task_id = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{task_type}"
     fname = f"{task_id}.json"
@@ -115,12 +131,12 @@ def dispatch_to_agent(agent_name: str, task_type: str, payload: str) -> str:
         f"task: {agent_name} {task_type}"
     )
     if ok:
-        return (f"✅ 已派发给 **{agent_name}**\n"
-                f"- 类型: `{task_type}`\n"
-                f"- 内容: {payload[:120]}\n"
+        return (f"✅ Dispatched to **{agent_name}**\n"
+                f"- Type: `{task_type}`\n"
+                f"- Payload: {payload[:120]}\n"
                 f"- ID: `{task_id}`\n\n"
-                f"约 2 分钟后执行，结果写入 outbox。")
-    return f"⚠️ 派发失败，请检查 agent_name `{agent_name}` 是否已注册（agents/{agent_name}.json 是否存在）。"
+                f"Will execute within 15s. Result written to outbox.")
+    return f"⚠️ Dispatch failed — agent `{agent_name}` not found. Is `agents/{agent_name}.json` registered?"
 
 
 # ── Claude CLI 调用 ────────────────────────────────────────────────────────────
@@ -138,15 +154,15 @@ def ask_claude_cli(sender_name: str, text: str) -> str:
         )
         reply = result.stdout.strip()
         if result.returncode != 0 and not reply:
-            reply = f"⚠️ 执行出错：{result.stderr[:200]}"
-        return reply or "（无回复）"
+            reply = f"⚠️ Error: {result.stderr[:200]}"
+        return reply or "(no response)"
     except subprocess.TimeoutExpired:
-        return "⚠️ 超时了（超过 120 秒），任务可能还在后台跑。"
+        return "⚠️ Timed out (>120s). Task may still be running in background."
     except FileNotFoundError:
-        return f"⚠️ 找不到 claude 命令（{CLAUDE_BIN}），请确认已安装 Claude Code CLI。"
+        return f"⚠️ Claude CLI not found at `{CLAUDE_BIN}`. Please install Claude Code CLI."
     except Exception as e:
         logger.error("claude CLI error: %s", e)
-        return f"⚠️ 调用失败：{e}"
+        return f"⚠️ Call failed: {e}"
 
 
 def run_reporter_now() -> str:
@@ -165,9 +181,9 @@ def run_reporter_now() -> str:
             ["python3", reporter, config, "morning"],
             capture_output=True, text=True, timeout=60
         )
-        return result.stdout.strip() or result.stderr.strip()[:200] or "✅ 汇报已发送"
+        return result.stdout.strip() or result.stderr.strip()[:200] or "✅ Report sent"
     except Exception as e:
-        return f"⚠️ 执行失败: {e}"
+        return f"⚠️ Execution failed: {e}"
 
 
 # ── DingTalk Chatbot Handler ───────────────────────────────────────────────────
@@ -189,17 +205,43 @@ class GTMAgentHandler(dingtalk_stream.ChatbotHandler):
                 text = "你好，介绍一下你自己和你能做什么"
 
             # ── 优先检查 Agent 派发命令 ─────────────────────────────────────
-            # 格式: "{agent_name} taste|prompt|command: {payload}"
-            m = DISPATCH_RE.match(text)
+
+            agents_to_dispatch = []  # list of (agent_name, task_type, payload)
+
+            # 格式3优先: "派发任务给 agent1和agent2，{payload}"（自然语言）
+            m = NL_DISPATCH_RE.search(text)
             if m:
-                agent_name, task_type, payload = m.group(1), m.group(2).lower(), m.group(3).strip()
-                logger.info("Dispatch → %s [%s]: %s", agent_name, task_type, payload[:60])
+                names = parse_agent_names(m.group(1))
+                payload = m.group(2).strip()
+                agents_to_dispatch = [(n, "command", payload) for n in names]
+
+            # 格式2: "agent1,agent2 command: {payload}" 或 "agent1和agent2 command: {payload}"
+            if not agents_to_dispatch:
+                m = MULTI_DISPATCH_RE.match(text)
+                if m:
+                    names = parse_agent_names(m.group(1))
+                    task_type = m.group(2).lower()
+                    payload = m.group(3).strip()
+                    agents_to_dispatch = [(n, task_type, payload) for n in names]
+
+            # 格式1: "{agent} taste|prompt|command: {payload}"（单 agent）
+            if not agents_to_dispatch:
+                m = DISPATCH_RE.match(text)
+                if m:
+                    agents_to_dispatch = [(m.group(1), m.group(2).lower(), m.group(3).strip())]
+
+            if agents_to_dispatch:
                 loop = asyncio.get_event_loop()
-                reply = await loop.run_in_executor(
-                    _executor, dispatch_to_agent, agent_name, task_type, payload
-                )
+                replies = []
+                for agent_name, task_type, payload in agents_to_dispatch:
+                    logger.info("Dispatch → %s [%s]: %s", agent_name, task_type, payload[:60])
+                    r = await loop.run_in_executor(
+                        _executor, dispatch_to_agent, agent_name, task_type, payload
+                    )
+                    replies.append(r)
+                reply = "\n\n".join(replies)
                 try:
-                    self.reply_markdown(title="MarketClaude · 派发", text=reply, incoming_message=incoming)
+                    self.reply_markdown(title="MarketClaude · Dispatch", text=reply, incoming_message=incoming)
                 except Exception as e:
                     logger.error("reply_markdown failed: %s", e)
                 return AckMessage.STATUS_OK, "ok"
@@ -208,7 +250,7 @@ class GTMAgentHandler(dingtalk_stream.ChatbotHandler):
             if REPORT_RE.match(text):
                 logger.info("Report now triggered by %s", sender_name)
                 try:
-                    self.reply_text("📊 触发汇报中…", incoming_message=incoming)
+                    self.reply_text("📊 Generating report…", incoming_message=incoming)
                 except Exception:
                     pass
                 loop = asyncio.get_event_loop()
@@ -221,7 +263,7 @@ class GTMAgentHandler(dingtalk_stream.ChatbotHandler):
 
             # ── 其他消息交给 Claude CLI ─────────────────────────────────────
             try:
-                self.reply_text("⏳ 收到，处理中…", incoming_message=incoming)
+                self.reply_text("⏳ On it…", incoming_message=incoming)
             except Exception as e:
                 logger.warning("reply_text failed: %s", e)
 
