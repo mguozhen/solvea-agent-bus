@@ -1,0 +1,7 @@
+{
+  "id": "20260401175732_command",
+  "type": "command",
+  "payload": "你把今天发布的所有post发到这个群里，带上链接",
+  "from": "dingtalk",
+  "created_at": "2026-04-02T00:57:32.276403+00:00"
+}
